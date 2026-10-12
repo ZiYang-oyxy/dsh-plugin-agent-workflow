@@ -477,6 +477,7 @@ export function deriveWorkflowLayout(input: WorkflowLayoutInput): readonly Workf
   const seenCalls = collectCallIds(turns)
   for (const call of runningCalls) {
     if (seenCalls.has(call.callId)) continue
+    const argsRaw = call.phase === 'start' ? call.argsRaw : ''
     const laidList: LaidCell[] = [{
       absTime: null,
       toolName: call.name,
@@ -485,8 +486,8 @@ export function deriveWorkflowLayout(input: WorkflowLayoutInput): readonly Workf
       cell: {
         index: ++index,
         kind: 'tool',
-        ...summarizeCall(call.name, call.argsRaw),
-        inputDetail: call.argsRaw,
+        ...summarizeCall(call.name, argsRaw),
+        ...(call.phase === 'start' ? { inputDetail: argsRaw } : {}),
         callId: call.callId,
         timeSeconds: null,
         startedAt: finiteTime(call.time),
@@ -1012,10 +1013,10 @@ function expandSubCalls(
           ? (sub.call !== null
             ? summarizeCall(sub.call.name, sub.call.argsRaw)
             : resultAsText(resultPreview))
-          : summarizeCall(sub.name, sub.argsRaw)),
+          : summarizeCall(sub.name, sub.phase === 'start' ? sub.argsRaw : '')),
         ...(settled
           ? (sub.call !== null ? { inputDetail: sub.call.argsRaw } : {})
-          : { inputDetail: sub.argsRaw }),
+          : sub.phase === 'start' ? { inputDetail: sub.argsRaw } : {}),
         ...(settled
           ? {
             outputDetail: detailResult(sub),

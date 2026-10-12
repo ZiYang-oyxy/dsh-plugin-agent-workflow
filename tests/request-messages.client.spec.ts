@@ -5,14 +5,14 @@ import type { SessionEvent } from '@deepseek-ai/dsh-session/types'
 import { attachRequestMessages } from '../src/client/request-messages.ts'
 import type { WorkflowRequestView } from '../src/client/projection/contract.ts'
 
-function message(id: string, role: Message['role'], text: string): Message {
+function message(id: string, role: 'system' | 'developer' | 'user' | 'assistant', text: string): Message {
   return {
-    id,
+    id: id as Message['id'],
     role,
     content: [{ type: 'text', text }],
     source: role === 'assistant'
       ? { kind: 'model', provider: 'test', model: 'test' }
-      : { kind: 'user' },
+      : role === 'system' ? { kind: 'system-prompt' } : { kind: 'user' },
   } as Message
 }
 

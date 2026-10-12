@@ -38,8 +38,11 @@
 
 | 插件版本 | DSH 版本 |
 | --- | --- |
+| `0.3.x` | `dsh@0.2.0-rc.2` |
 | `0.2.x` | `dsh@0.1.5-alpha.1` |
 | `0.1.x` | `dsh@0.1.0-rc.8` |
+
+从插件 `0.2.x` 升级时，安装 `0.3.x` 并重启 Web UI。此版本支持 DSH 新增的工具准备阶段（参数尚未生成），并从当前请求配置读取模型名称。
 
 DeepSeek Harness 仍处于预发布阶段，不同 RC 版本的客户端接口可能发生变化。升级 DSH 后，需要同时安装与新版本适配的插件版本。
 
@@ -50,43 +53,43 @@ DeepSeek Harness 仍处于预发布阶段，不同 RC 版本的客户端接口�
 假设安装包位于当前目录：
 
 ```sh
-npx --yes @deepseek-ai/dsh@0.1.5-alpha.1 plugin \
+npx --yes @deepseek-ai/dsh@0.2.0-rc.2 plugin \
   --profile web \
-  add ./dsh-plugin-agent-workflow-0.2.0.tgz \
+  add ./dsh-plugin-agent-workflow-0.3.0.tgz \
   --workspace-root
 ```
 
 检查安装结果：
 
 ```sh
-npx --yes @deepseek-ai/dsh@0.1.5-alpha.1 plugin \
+npx --yes @deepseek-ai/dsh@0.2.0-rc.2 plugin \
   --profile web \
   list --depth 0
 ```
 
-列表中出现 `dsh-plugin-agent-workflow 0.2.0` 表示安装成功。重启 Web UI 后即可看到“工作流”标签页：
+列表中出现 `dsh-plugin-agent-workflow 0.3.0` 表示安装成功。重启 Web UI 后即可看到“工作流”标签页：
 
 ```sh
-npx --yes @deepseek-ai/dsh@0.1.5-alpha.1 web
+npx --yes @deepseek-ai/dsh@0.2.0-rc.2 web
 ```
 
 ### 从 GitHub 安装
 
-仓库发布 `v0.2.0` 标签后，可以直接安装固定版本。`web` profile：
+仓库发布 `v0.3.0` 标签后，可以直接安装固定版本。`web` profile：
 
 ```sh
-npx --yes @deepseek-ai/dsh@0.1.5-alpha.1 plugin \
+npx --yes @deepseek-ai/dsh@0.2.0-rc.2 plugin \
   --profile web \
-  add github:xuanyuanzhifeng/dsh-plugin-agent-workflow#v0.2.0 \
+  add github:xuanyuanzhifeng/dsh-plugin-agent-workflow#v0.3.0 \
   --workspace-root
 ```
 
 `video` profile 使用相同插件版本：
 
 ```sh
-npx --yes @deepseek-ai/dsh@0.1.5-alpha.1 plugin \
+npx --yes @deepseek-ai/dsh@0.2.0-rc.2 plugin \
   --profile video \
-  add github:xuanyuanzhifeng/dsh-plugin-agent-workflow#v0.2.0 \
+  add github:xuanyuanzhifeng/dsh-plugin-agent-workflow#v0.3.0 \
   --workspace-root
 
 pnpm dsh --profile video
@@ -97,13 +100,25 @@ pnpm dsh --profile video
 ## 卸载
 
 ```sh
-npx --yes @deepseek-ai/dsh@0.1.5-alpha.1 plugin \
+npx --yes @deepseek-ai/dsh@0.2.0-rc.2 plugin \
   --profile web \
   remove dsh-plugin-agent-workflow \
   --workspace-root
 ```
 
 卸载后重启 DSH Web。该操作只移除独立的“工作流”插件，不会影响内置的“轨迹”标签页。
+
+### 安装到本地 DSH 源码目录
+
+在已经安装依赖并构建好的 DSH `0.2.0-rc.2` 源码目录中执行（替换安装包的绝对路径）：
+
+```sh
+pnpm dsh plugin --profile web add /absolute/path/dsh-plugin-agent-workflow-0.3.0.tgz --workspace-root
+pnpm dsh plugin --profile web list --depth 0
+pnpm dsh web
+```
+
+插件由该源码目录的 CLI 安装到 Web profile，并自动加入 `dsh.profile.bundles`；无需修改 DSH 的内置插件源码。
 
 ## 本地开发与打包
 
